@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class TransactionManager {
     private static final String TRANSACTIONS_FILE = "transactions.csv";
@@ -42,12 +43,28 @@ public class TransactionManager {
     }
 
     public void clearTransactions() {
-        try {
-            Files.deleteIfExists(Paths.get(TRANSACTIONS_FILE));
-            transactions.clear();
-            createTransactionsFileIfNotExists();
-        } catch (IOException e) {
-            System.err.println("Error clearing transactions: " + e.getMessage());
+        System.out.println("Type 'CONFIRM' to clear all transactions (Step 1/2):");
+        Scanner scanner = new Scanner(System.in);
+        String confirmation1 = scanner.nextLine();
+
+        if ("CONFIRM".equals(confirmation1)) {
+            System.out.println("Type 'CONFIRM' once more to clear all transactions (Step 2/2):");
+            String confirmation2 = scanner.nextLine();
+
+            if ("CONFIRM".equals(confirmation2)) {
+                try {
+                    Files.deleteIfExists(Paths.get(TRANSACTIONS_FILE));
+                    transactions.clear();
+                    createTransactionsFileIfNotExists();
+                    System.out.println("All transactions cleared.");
+                } catch (IOException e) {
+                    System.err.println("Error clearing transactions: " + e.getMessage());
+                }
+            } else {
+                System.out.println("Confirmation failed at step 2. Transactions not cleared.");
+            }
+        } else {
+            System.out.println("Confirmation failed at step 1. Transactions not cleared.");
         }
     }
 
@@ -88,4 +105,5 @@ public class TransactionManager {
         }
     }
 }
+
 
