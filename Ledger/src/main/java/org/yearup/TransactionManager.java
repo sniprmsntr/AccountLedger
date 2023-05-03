@@ -3,6 +3,7 @@ package org.yearup;
 import java.io.*;
 import java.math.BigDecimal;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -14,6 +15,7 @@ public class TransactionManager {
     private List<Transaction> transactions;
 
     public TransactionManager() {
+        createTransactionsFileIfNotExists();
         transactions = loadTransactions();
     }
 
@@ -43,8 +45,20 @@ public class TransactionManager {
         try {
             Files.deleteIfExists(Paths.get(TRANSACTIONS_FILE));
             transactions.clear();
+            createTransactionsFileIfNotExists();
         } catch (IOException e) {
             System.err.println("Error clearing transactions: " + e.getMessage());
+        }
+    }
+
+    private void createTransactionsFileIfNotExists() {
+        try {
+            Path path = Paths.get(TRANSACTIONS_FILE);
+            if (!Files.exists(path)) {
+                Files.createFile(path);
+            }
+        } catch (IOException e) {
+            System.err.println("Error creating transactions file: " + e.getMessage());
         }
     }
 
@@ -74,3 +88,4 @@ public class TransactionManager {
         }
     }
 }
+
