@@ -30,11 +30,13 @@ public class LedgerApp {
                     System.out.println("Enter deposit amount: ");
                     BigDecimal depositAmount = new BigDecimal(scanner.nextLine());
                     transactionManager.addDeposit(depositAmount);
+                    System.out.println("You have successfully deposited $" + depositAmount + "!");
                     break;
                 case "P":
                     System.out.println("Enter payment amount: ");
                     BigDecimal paymentAmount = new BigDecimal(scanner.nextLine()).negate();
                     transactionManager.addPayment(paymentAmount);
+                    System.out.println("You have successfully made a payment of $" + paymentAmount.negate() + "!");
                     break;
                 case "L":
                     transactionManager.showLedger();
