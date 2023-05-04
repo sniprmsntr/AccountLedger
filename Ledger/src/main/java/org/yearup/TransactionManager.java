@@ -14,6 +14,8 @@ import java.util.Scanner;
 public class TransactionManager {
     private static final String TRANSACTIONS_FILE = "transactions.csv";
     private List<Transaction> transactions;
+    private static final String ANSI_RED = "\033[31m";
+    private static final String ANSI_RESET = "\033[0m";
 
     public TransactionManager() {
         createTransactionsFileIfNotExists();
@@ -24,8 +26,8 @@ public class TransactionManager {
         saveTransaction(new Transaction(LocalDate.now(), LocalTime.now(), "Deposit", "User", amount));
     }
 
-    public void addPayment(BigDecimal amount) {
-        saveTransaction(new Transaction(LocalDate.now(), LocalTime.now(), "Payment", "User", amount));
+    public void addPayment(BigDecimal amount, String vendor) {
+        saveTransaction(new Transaction(LocalDate.now(), LocalTime.now(), "Payment", vendor, amount.negate()));
     }
 
     public void showLedger() {
@@ -43,12 +45,12 @@ public class TransactionManager {
     }
 
     public void clearTransactions() {
-        System.out.println("Type 'CONFIRM' to clear all transactions (Step 1/2):");
+        System.out.println(ANSI_RED + "Type 'CONFIRM' to clear all transactions (Step 1/2):" + ANSI_RESET);
         Scanner scanner = new Scanner(System.in);
         String confirmation1 = scanner.nextLine();
 
         if ("CONFIRM".equals(confirmation1)) {
-            System.out.println("Type 'CONFIRM' once more to clear all transactions (Step 2/2):");
+            System.out.println(ANSI_RED + "Type 'CONFIRM' once more to clear all transactions (Step 2/2):" + ANSI_RESET);
             String confirmation2 = scanner.nextLine();
 
             if ("CONFIRM".equals(confirmation2)) {
@@ -61,10 +63,10 @@ public class TransactionManager {
                     System.err.println("Error clearing transactions: " + e.getMessage());
                 }
             } else {
-                System.out.println("Confirmation failed at step 2. Transactions not cleared.");
+                System.out.println(ANSI_RED + "Confirmation failed at step 2. Transactions not cleared." + ANSI_RESET);
             }
         } else {
-            System.out.println("Confirmation failed at step 1. Transactions not cleared.");
+            System.out.println(ANSI_RED + "Confirmation failed at step 1. Transactions not cleared." + ANSI_RESET);
         }
     }
 
@@ -97,13 +99,11 @@ public class TransactionManager {
     private void saveTransaction(Transaction transaction) {
         transactions.add(transaction);
         try (FileWriter fw = new FileWriter(TRANSACTIONS_FILE, true);
-             BufferedWriter bw = new BufferedWriter(fw)) {
-            bw.write(transaction.toCsv());
-            bw.newLine();
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+            out.println(transaction.toCSV());
         } catch (IOException e) {
             System.err.println("Error saving transaction: " + e.getMessage());
         }
     }
 }
-
-

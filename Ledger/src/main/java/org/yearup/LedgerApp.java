@@ -1,59 +1,59 @@
 package org.yearup;
-
 import java.math.BigDecimal;
 import java.util.Scanner;
 
 public class LedgerApp {
     public static void main(String[] args) {
-        LedgerApp ledgerApp = new LedgerApp();
-        ledgerApp.run();
-    }
+        Scanner scanner = new Scanner(System.in);
+        TransactionManager manager = new TransactionManager();
+        String input;
 
-    public void run() {
-        TransactionManager transactionManager = new TransactionManager();
-        boolean running = true;
-
-        while (running) {
-            System.out.println("Menu:");
+        while (true) {
+            System.out.println("\nMenu:");
             System.out.println("D) Add Deposit");
-            System.out.println("P) Make Payment (Debit)");
-            System.out.println("L) Ledger");
+            System.out.println("P) Make Payment");
+            System.out.println("L) View Ledger");
             System.out.println("B) Show Total Balance");
             System.out.println("C) Clear Transactions");
             System.out.println("X) Exit");
+            System.out.print("Enter your choice: ");
 
-            Scanner scanner = new Scanner(System.in);
-            String choice = scanner.nextLine().trim().toUpperCase();
+            input = scanner.nextLine();
 
-            switch (choice) {
+            switch (input.toUpperCase()) {
                 case "D":
-                    System.out.println("Enter deposit amount: ");
-                    BigDecimal depositAmount = new BigDecimal(scanner.nextLine());
-                    transactionManager.addDeposit(depositAmount);
+                    System.out.print("Enter deposit amount: ");
+                    BigDecimal depositAmount = scanner.nextBigDecimal();
+                    scanner.nextLine();
+                    manager.addDeposit(depositAmount);
                     System.out.println("You have successfully deposited $" + depositAmount + "!");
                     break;
                 case "P":
-                    System.out.println("Enter payment amount: ");
-                    BigDecimal paymentAmount = new BigDecimal(scanner.nextLine()).negate();
-                    transactionManager.addPayment(paymentAmount);
-                    System.out.println("You have successfully made a payment of $" + paymentAmount.negate() + "!");
+                    System.out.print("Enter payment amount: ");
+                    BigDecimal paymentAmount = scanner.nextBigDecimal();
+                    scanner.nextLine();
+                    System.out.print("Enter payment vendor: ");
+                    String vendor = scanner.nextLine();
+                    manager.addPayment(paymentAmount, vendor);
+                    System.out.println("You have successfully made a payment of $" + paymentAmount + " to " + vendor + "!");
                     break;
                 case "L":
-                    transactionManager.showLedger();
+                    manager.showLedger();
                     break;
                 case "B":
-                    transactionManager.showTotalBalance();
+                    manager.showTotalBalance();
                     break;
                 case "C":
-                    transactionManager.clearTransactions();
+                    manager.clearTransactions();
                     break;
                 case "X":
-                    running = false;
+                    System.out.println("Goodbye!");
+                    System.exit(0);
                     break;
                 default:
-                    System.out.println("Invalid choice");
-                    break;
+                    System.out.println("Invalid option. Please try again.");
             }
         }
     }
 }
+
